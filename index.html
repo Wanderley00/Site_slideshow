@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Slideshow com Música</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: radial-gradient(circle at center, #1a1a1a 0%, #000000 100%);
+            overflow: hidden;
+        }
+        
+        .slideshow-container {
+            position: relative;
+            width: 100vw;
+            height: 80vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            perspective: 1000px;
+        }
+        
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: all 1.5s ease-in-out;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transform: scale(0.95) rotateY(-10deg);
+        }
+        
+        .slide img {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            display: block;
+            box-shadow: 0 10px 30px rgba(255, 0, 0, 0.2);
+            border-radius: 10px;
+            filter: brightness(0.9);
+            transition: all 0.5s ease;
+        }
+        
+        .slide.active {
+            opacity: 1;
+            transform: scale(1) rotateY(0);
+        }
+        
+        .slide.active img {
+            filter: brightness(1);
+        }
+        
+        .controls {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 15px 25px;
+            border-radius: 40px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            background: linear-gradient(45deg, #ff1744, #ff4081);
+            color: white;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(255, 23, 68, 0.2);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        button:hover {
+            background: linear-gradient(45deg, #ff4081, #ff1744);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(255, 23, 68, 0.3);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+
+        /* Efeito de partículas no fundo */
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+            100% { transform: translateY(0px) rotate(360deg); }
+        }
+
+        .particle {
+            position: fixed;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 23, 68, 0.2);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float 8s infinite;
+        }
+    </style>
+</head>
+<body>
+    <!-- Adiciona partículas ao fundo -->
+    <script>
+        for(let i = 0; i < 50; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + 'vw';
+            particle.style.top = Math.random() * 100 + 'vh';
+            particle.style.animationDelay = Math.random() * 5 + 's';
+            document.body.appendChild(particle);
+        }
+    </script>
+
+    <div class="slideshow-container">
+        <div class="slide active">
+            <img src="coracao1.png" alt="Imagem 1">
+        </div>
+        <div class="slide">
+            <img src="coracao2.jpg" alt="Imagem 2">
+        </div>
+        <div class="slide">
+            <img src="coracao3.jpeg" alt="Imagem 3">
+        </div>
+        <div class="slide active">
+            <img src="coracao4.png" alt="Imagem 1">
+        </div>
+    </div>
+    
+    <div class="controls">
+        <button onclick="toggleMusic()">Clique aqui e aproveite até o fim</button>
+    </div>
+
+    <audio id="bgMusic" loop autoplay>
+        <source src="garrafa_vazia.mpeg" type="audio/mpeg">
+        Seu navegador não suporta o elemento de áudio.
+    </audio>
+
+    <script>
+        // Script anterior mantido
+        const slides = document.querySelectorAll('.slide');
+        const music = document.getElementById('bgMusic');
+        let currentSlide = 0;
+        let slideshowInterval;
+        let isPlaying = true;
+
+        window.onload = function() {
+            music.play().catch(function(error) {
+                console.log("Reprodução automática bloqueada pelo navegador");
+            });
+        }
+
+        function showSlide(index) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[index].classList.add('active');
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % slides.length;
+            showSlide(currentSlide);
+        }
+
+        function toggleSlideshow() {
+            if (isPlaying) {
+                clearInterval(slideshowInterval);
+            } else {
+                slideshowInterval = setInterval(nextSlide, 3000);
+            }
+            isPlaying = !isPlaying;
+        }
+
+        function toggleMusic() {
+            if (music.paused) {
+                music.play();
+            } else {
+                music.pause();
+            }
+        }
+
+        slideshowInterval = setInterval(nextSlide, 3000);
+    </script>
+</body>
+</html>
